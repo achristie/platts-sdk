@@ -15,7 +15,7 @@ tc = platts.TokenClient("username", "password", "apikey")
 mdd = platts.MarketData(tc)
 
 sym = ["PCAAS00", "PCAAT00"]
-cur_df = mdd.get_current_assessments(["PCAAS00"])
+cur_df = mdd.get_current_assessments(sym)
 print(cur_df)
 
 mdc = "ET"
