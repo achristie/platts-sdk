@@ -1,40 +1,21 @@
-from functools import lru_cache
 import requests
-import logging
 import pandas as pd
 
 
-class Client:
-    def __init__(self, username, password, apikey, as_df=False):
-        self.un = username
-        self.pw = password
-        self.apikey = apikey
+class MarketData:
+    def __init__(self, token_client, as_df=True):
+        self.token_client = token_client
         self.as_df = as_df
-
-    @property
-    @lru_cache()
-    def token(self):
-        body = {"username": self.un, "password": self.pw}
-        headers = {"appkey": self.apikey}
-
-        try:
-            r = requests.post(
-                "https://api.platts.com/auth/api", data=body, headers=headers
-            )
-            r.raise_for_status()
-            return r.json()["access_token"]
-        except Exception as err:
-            if r.status_code >= 500:
-                logging.error(f"[{r.status_code}] - {err}")
-            else:
-                logging.error(f"[{r.status_code}] -  {r.json()}")
-            raise
+        return
 
     def get_current_assessments_by_mdc(self, mdc):
         # must be quotes around mdc
         params = {"filter": f'mdc: "{mdc}"', "pagesize": 10000}
 
-        headers = {"Authorization": f"Bearer {self.token}", "appkey": self.apikey}
+        headers = {
+            "Authorization": f"Bearer {self.token_client.token}",
+            "appkey": self.token_client.apikey,
+        }
 
         try:
             r = requests.get(
@@ -63,7 +44,10 @@ class Client:
         symbols = ['"' + x + '"' for x in symbols]
 
         params = {"filter": f"symbol in ({','.join(symbols)})"}
-        headers = {"Authorization": f"Bearer {self.token}", "appkey": self.apikey}
+        headers = {
+            "Authorization": f"Bearer {self.token_client.token}",
+            "appkey": self.token_client.apikey,
+        }
 
         try:
             r = requests.get(
