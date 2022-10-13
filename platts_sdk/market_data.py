@@ -1,9 +1,11 @@
 from typing import Any
 import pandas as pd
 
+from platts_sdk.tok import TokenClient
+
 
 class MarketData:
-    def __init__(self, token_client, as_df=True):
+    def __init__(self, token_client: TokenClient, as_df=True):
         self.token_client = token_client
         self.as_df = as_df
         return

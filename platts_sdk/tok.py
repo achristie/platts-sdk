@@ -4,7 +4,7 @@ import logging
 
 
 class TokenClient:
-    def __init__(self, username, password, apikey):
+    def __init__(self, username: str, password: str, apikey: str):
         self.token_endpoint = "https://api.platts.com/auth/api"
         self.endpoint = "https://api.platts.com"
         self.un = username
@@ -20,8 +20,8 @@ class TokenClient:
         }
 
         r = requests.get(f"{self.endpoint}{path}", headers=headers, params=params)
+        r.raise_for_status()
         try:
-            r.raise_for_status()
             return r.json()
         except Exception as err:
             if r.status_code >= 500:
@@ -37,8 +37,8 @@ class TokenClient:
         headers = {"appkey": self.apikey}
 
         r = requests.post(self.token_endpoint, data=body, headers=headers)
+        r.raise_for_status()
         try:
-            r.raise_for_status()
             return r.json()["access_token"]
         except Exception as err:
             if r.status_code >= 500:
