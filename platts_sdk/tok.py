@@ -4,9 +4,10 @@ import logging
 
 
 class TokenClient:
+    __token_endpoint = "https://api.platts.com/auth/api"
+    __endpoint = "https://api.platts.com"
+
     def __init__(self, username: str, password: str, apikey: str):
-        self.token_endpoint = "https://api.platts.com/auth/api"
-        self.endpoint = "https://api.platts.com"
         self.un = username
         self.pw = password
         self.apikey = apikey
@@ -19,7 +20,7 @@ class TokenClient:
             "User-Agent": "platts-py-sdk",
         }
 
-        r = requests.get(f"{self.endpoint}{path}", headers=headers, params=params)
+        r = requests.get(f"{self.__endpoint}{path}", headers=headers, params=params)
         r.raise_for_status()
         try:
             return r.json()
@@ -36,7 +37,7 @@ class TokenClient:
         body = {"username": self.un, "password": self.pw}
         headers = {"appkey": self.apikey}
 
-        r = requests.post(self.token_endpoint, data=body, headers=headers)
+        r = requests.post(self.__token_endpoint, data=body, headers=headers)
         r.raise_for_status()
         try:
             return r.json()["access_token"]
