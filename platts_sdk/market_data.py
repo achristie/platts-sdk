@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Union
 import typing
 import pandas as pd
 
@@ -11,9 +11,7 @@ class MarketData:
         self.as_df = as_df
         return
 
-    def get_current_assessments_by_mdc(
-        self, mdc: str
-    ) -> typing.Union[pd.DataFrame, Any]:
+    def get_current_assessments_by_mdc(self, mdc: str) -> Union[pd.DataFrame, Any]:
         # get the current assessments for all symbols in a MDC (market data category)
         params = {"filter": f'mdc: "{mdc}"', "pagesize": 10000}
 
@@ -28,9 +26,7 @@ class MarketData:
 
         return data
 
-    def get_current_assessments(
-        self, symbols: List[str]
-    ) -> typing.Union[pd.DataFrame, Any]:
+    def get_current_assessments(self, symbols: List[str]) -> Union[pd.DataFrame, Any]:
         # get the current assessments for a list of symbols
         symbols = ['"' + x + '"' for x in symbols]
         params = {"filter": f"symbol in ({','.join(symbols)})"}

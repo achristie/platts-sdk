@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Dict
 import requests
 import logging
 
@@ -13,7 +14,7 @@ class TokenClient:
         self.apikey = apikey
         return
 
-    def get(self, path, params):
+    def get(self, path: str, params: Dict[str, str]):
         headers = {
             "appkey": self.apikey,
             "Authorization": f"Bearer {self.token}",
