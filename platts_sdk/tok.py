@@ -1,10 +1,14 @@
 from functools import lru_cache
 from typing import Dict
+import typing
 import requests
 import logging
 
 
 class TokenClient:
+    """An HTTP Client which injects Token and API Key into requests.
+    Will page through all results"""
+
     __token_endpoint = "https://api.platts.com/auth/api"
     __endpoint = "https://api.platts.com"
 
@@ -14,17 +18,31 @@ class TokenClient:
         self.apikey = apikey
         return
 
-    def get(self, path: str, params: Dict[str, str]):
-        headers = {
-            "appkey": self.apikey,
-            "Authorization": f"Bearer {self.token}",
-            "User-Agent": "platts-py-sdk",
-        }
+    def get(self, path: str, params: Dict[str, typing.Any]):
+        results = []
 
-        r = requests.get(f"{self.__endpoint}{path}", headers=headers, params=params)
+        def fetch(params: Dict[str, typing.Any], page: int):
+            params["page"] = page
+            headers = {
+                "appkey": self.apikey,
+                "Authorization": f"Bearer {self.token}",
+                "User-Agent": "platts-py-sdk",
+            }
+
+            r = requests.get(f"{self.__endpoint}{path}", headers=headers, params=params)
+            return r
+
+        r = fetch(params, 1)
         r.raise_for_status()
         try:
-            return r.json()
+            j = r.json()
+            pgs = j["metadata"]["totalPages"]
+            results.extend(j["results"])
+            for i in range(2, pgs + 1):
+                n = fetch(params, i)
+                results.extend(n.json()["results"])
+            return results
+
         except Exception as err:
             if r.status_code >= 500:
                 logging.error(err)
