@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 import typing
 import pandas as pd
 
@@ -29,7 +29,7 @@ class MarketData:
         return data
 
     def get_current_assessments(
-        self, symbols: list[str]
+        self, symbols: List[str]
     ) -> typing.Union[pd.DataFrame, Any]:
         # get the current assessments for a list of symbols
         symbols = ['"' + x + '"' for x in symbols]
