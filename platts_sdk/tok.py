@@ -36,8 +36,8 @@ class TokenClient:
         body = {"username": self.un, "password": self.pw}
         headers = {"appkey": self.apikey}
 
+        r = requests.post(self.token_endpoint, data=body, headers=headers)
         try:
-            r = requests.post(self.token_endpoint, data=body, headers=headers)
             r.raise_for_status()
             return r.json()["access_token"]
         except Exception as err:
