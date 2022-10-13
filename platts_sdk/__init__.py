@@ -1,3 +1,3 @@
-__version__ = "0.2.0"
+__version__ = "0.3.5"
 from .market_data import MarketData
 from .tok import TokenClient
